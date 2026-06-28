@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DBMS and SQL Notes - Bajaj Finserv Java Internship Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <p class="eyebrow">Java Internship Exam Prep</p>
+      <h1>DBMS and SQL Concepts Notes</h1>
+      <p class="hero-copy">
+        Detailed revision notes for Bajaj Finserv internship preparation covering core DBMS theory,
+        SQL operations, and a separate MCQ practice section for quick self-testing.
+      </p>
+      <div class="hero-tags">
+        <span>DBMS Fundamentals</span>
+        <span>SQL Concepts</span>
+        <span>Interview Revision</span>
+        <span>40 MCQs</span>
+      </div>
+    </header>
+
+    <main class="content-card">
+      <input type="radio" name="tabs" id="tab-notes" checked>
+      <input type="radio" name="tabs" id="tab-mcqs">
+
+      <div class="tab-controls">
+        <label for="tab-notes">Theory Notes</label>
+        <label for="tab-mcqs">MCQ Practice</label>
+      </div>
+
+      <section class="tab-panel notes-panel">
+        <div class="toc">
+          <h2>Topics Covered</h2>
+          <div class="toc-grid">
+            <a href="#joins">Joins</a>
+            <a href="#aggregation">Aggregation and Grouping</a>
+            <a href="#filtering">Filtering</a>
+            <a href="#set-operators">Set Operators</a>
+            <a href="#ranking">Ranking Functions</a>
+            <a href="#normalization">Normalization</a>
+            <a href="#indexing">Indexing</a>
+            <a href="#keys">Keys</a>
+            <a href="#sql-nosql">SQL vs NoSQL</a>
+            <a href="#transactions">Transactions</a>
+            <a href="#objects">Database Objects</a>
+          </div>
+        </div>
+
+        <article class="topic-section" id="joins">
+          <h2>1. Joins</h2>
+          <p>
+            A join is used to combine rows from two or more tables based on a related column.
+            Joins are extremely important because most real databases store data in separate normalized
+            tables. Instead of keeping employee and department information in one large table, a relational
+            design stores them separately and connects them through keys.
+          </p>
+          <div class="concept-box">
+            <h3>Why joins are used</h3>
+            <ul>
+              <li>To fetch related data from multiple tables in one query.</li>
+              <li>To reduce redundancy by keeping data normalized.</li>
+              <li>To create meaningful reports and business insights.</li>
+            </ul>
+          </div>
+          <div class="two-col">
+            <div>
+              <h3>Common join types</h3>
+              <ul>
+                <li><strong>INNER JOIN:</strong> Returns only matching rows from both tables.</li>
+                <li><strong>LEFT JOIN:</strong> Returns all rows from the left table and matching rows from the right table.</li>
+                <li><strong>RIGHT JOIN:</strong> Returns all rows from the right table and matching rows from the left table.</li>
+                <li><strong>FULL OUTER JOIN:</strong> Returns matching rows and non-matching rows from both tables.</li>
+                <li><strong>SELF JOIN:</strong> A table is joined with itself.</li>
+                <li><strong>CROSS JOIN:</strong> Returns the Cartesian product of both tables.</li>
+              </ul>
+            </div>
+            <div class="code-card">
+              <h3>Example</h3>
+<pre><code>SELECT e.employee_name, d.department_name
+FROM Employees e
+INNER JOIN Departments d
+ON e.department_id = d.department_id;</code></pre>
+            </div>
+          </div>
+          <p>
+            In exams, a common trick is to ask which join returns unmatched rows. Remember:
+            <strong>LEFT JOIN keeps everything from the left table</strong>, while
+            <strong>INNER JOIN keeps only common data</strong>.
+          </p>
+        </article>
+
+        <article class="topic-section" id="aggregation">
+          <h2>2. Aggregation and Grouping</h2>
+          <p>
+            Aggregation means performing calculations on multiple rows and returning a single summarized value.
+            SQL aggregate functions are used in reporting, analytics, dashboards, and business summaries.
+          </p>
+          <h3>Main aggregate functions</h3>
+          <ul>
+            <li><strong>COUNT()</strong> counts rows.</li>
+            <li><strong>SUM()</strong> adds numeric values.</li>
+            <li><strong>AVG()</strong> finds the average.</li>
+            <li><strong>MIN()</strong> finds the smallest value.</li>
+            <li><strong>MAX()</strong> finds the largest value.</li>
+          </ul>
+          <h3>GROUP BY</h3>
+          <p>
+            <code>GROUP BY</code> groups rows that have the same values in one or more columns. Aggregate
+            functions are then applied to each group. This is useful when you want summaries by department,
+            city, category, branch, or employee role.
+          </p>
+          <div class="code-card">
+<pre><code>SELECT department_id, COUNT(*) AS total_employees, AVG(salary) AS avg_salary
+FROM Employees
+GROUP BY department_id;</code></pre>
+          </div>
+          <div class="concept-box">
+            <h3>Important rule</h3>
+            <p>
+              In a grouped query, every selected column must either be part of the
+              <code>GROUP BY</code> clause or be used inside an aggregate function.
+            </p>
+          </div>
+          <h3>HAVING</h3>
+          <p>
+            <code>HAVING</code> filters groups after aggregation. It is different from
+            <code>WHERE</code>, which filters rows before grouping.
+          </p>
+          <div class="code-card">
+<pre><code>SELECT department_id, COUNT(*) AS total_employees
+FROM Employees
+GROUP BY department_id
+HAVING COUNT(*) &gt; 5;</code></pre>
+          </div>
+        </article>
+
+        <article class="topic-section" id="filtering">
+          <h2>3. Filtering</h2>
+          <p>
+            Filtering is the process of selecting only the required rows from a table.
+            This is usually done using the <code>WHERE</code> clause. Proper filtering improves accuracy
+            and can also improve performance by reducing unnecessary data processing.
+          </p>
+          <h3>Common filtering operators</h3>
+          <ul>
+            <li><code>=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, <code>&lt;&gt;</code> for comparisons.</li>
+            <li><code>AND</code>, <code>OR</code>, <code>NOT</code> for logical combinations.</li>
+            <li><code>BETWEEN</code> for ranges.</li>
+            <li><code>IN</code> for matching a list of values.</li>
+            <li><code>LIKE</code> for pattern matching.</li>
+            <li><code>IS NULL</code> and <code>IS NOT NULL</code> for null checking.</li>
+          </ul>
+          <div class="two-col">
+            <div class="code-card">
+              <h3>Examples</h3>
+<pre><code>SELECT * FROM Employees
+WHERE salary &gt; 50000;
+
+SELECT * FROM Employees
+WHERE department_id IN (1, 2, 3);
+
+SELECT * FROM Employees
+WHERE employee_name LIKE 'A%';</code></pre>
+            </div>
+            <div>
+              <h3>Exam points</h3>
+              <ul>
+                <li><code>WHERE</code> cannot directly use aggregate functions like <code>COUNT()</code>.</li>
+                <li><code>HAVING</code> is used when filtering grouped results.</li>
+                <li><code>NULL</code> cannot be checked using <code>= NULL</code>; use <code>IS NULL</code>.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="topic-section" id="set-operators">
+          <h2>4. Set Operators</h2>
+          <p>
+            Set operators combine the results of two or more <code>SELECT</code> statements.
+            The participating queries must generally have the same number of columns and compatible data types.
+          </p>
+          <ul>
+            <li><strong>UNION:</strong> Combines results and removes duplicates.</li>
+            <li><strong>UNION ALL:</strong> Combines results and keeps duplicates.</li>
+            <li><strong>INTERSECT:</strong> Returns only common rows from both queries.</li>
+            <li><strong>EXCEPT / MINUS:</strong> Returns rows from the first query that are not in the second.</li>
+          </ul>
+          <div class="code-card">
+<pre><code>SELECT city FROM Customers
+UNION
+SELECT city FROM Suppliers;</code></pre>
+          </div>
+          <div class="concept-box">
+            <h3>Difference to remember</h3>
+            <p>
+              <code>UNION</code> removes duplicates, while <code>UNION ALL</code> is faster because it does
+              not perform duplicate elimination.
+            </p>
+          </div>
+        </article>
+
+        <article class="topic-section" id="ranking">
+          <h2>5. Ranking Functions</h2>
+          <p>
+            Ranking functions are window functions used to assign positions to rows within a result set.
+            They are commonly used in leaderboards, salary ranking, top-N analysis, and branch-wise comparisons.
+          </p>
+          <h3>Important ranking functions</h3>
+          <ul>
+            <li><strong>ROW_NUMBER()</strong> gives unique sequential numbers.</li>
+            <li><strong>RANK()</strong> gives same rank to ties and skips the next rank.</li>
+            <li><strong>DENSE_RANK()</strong> gives same rank to ties but does not skip numbers.</li>
+            <li><strong>NTILE(n)</strong> divides rows into n groups.</li>
+          </ul>
+          <div class="code-card">
+<pre><code>SELECT employee_name, salary,
+       RANK() OVER (ORDER BY salary DESC) AS salary_rank
+FROM Employees;</code></pre>
+          </div>
+          <p>
+            If two employees have the same highest salary, both may get rank 1.
+            In <code>RANK()</code> the next rank becomes 3, but in <code>DENSE_RANK()</code> the next rank becomes 2.
+          </p>
+        </article>
+
+        <article class="topic-section" id="normalization">
+          <h2>6. Normalization</h2>
+          <p>
+            Normalization is the process of organizing data in a database to reduce redundancy
+            and improve data integrity. It breaks large tables into smaller related tables and defines
+            relationships using keys.
+          </p>
+          <h3>Benefits</h3>
+          <ul>
+            <li>Reduces duplicate data.</li>
+            <li>Prevents update, insert, and delete anomalies.</li>
+            <li>Improves consistency and maintainability.</li>
+          </ul>
+          <h3>Normal forms</h3>
+          <ul>
+            <li><strong>1NF:</strong> Table has atomic values and no repeating groups.</li>
+            <li><strong>2NF:</strong> Table is in 1NF and all non-key attributes fully depend on the whole primary key.</li>
+            <li><strong>3NF:</strong> Table is in 2NF and has no transitive dependency.</li>
+            <li><strong>BCNF:</strong> Stronger version of 3NF where every determinant is a candidate key.</li>
+          </ul>
+          <div class="concept-box">
+            <h3>Common anomalies</h3>
+            <ul>
+              <li><strong>Insert anomaly:</strong> Cannot insert data without unrelated data.</li>
+              <li><strong>Update anomaly:</strong> Same data must be changed in multiple places.</li>
+              <li><strong>Delete anomaly:</strong> Deleting one row removes useful unrelated information.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="topic-section" id="indexing">
+          <h2>7. Indexing</h2>
+          <p>
+            An index is a data structure that improves the speed of data retrieval operations on a table.
+            It works like the index of a book. Instead of scanning every row, the database can directly
+            locate the needed records more efficiently.
+          </p>
+          <h3>Advantages</h3>
+          <ul>
+            <li>Speeds up <code>SELECT</code> queries.</li>
+            <li>Improves joins and filtering on indexed columns.</li>
+            <li>Helps sorting and grouping in many cases.</li>
+          </ul>
+          <h3>Disadvantages</h3>
+          <ul>
+            <li>Uses extra storage space.</li>
+            <li>Can slow down <code>INSERT</code>, <code>UPDATE</code>, and <code>DELETE</code> operations because the index also needs updating.</li>
+          </ul>
+          <h3>Types of indexing</h3>
+          <ul>
+            <li><strong>Primary index:</strong> Built on primary key.</li>
+            <li><strong>Unique index:</strong> Ensures unique values.</li>
+            <li><strong>Composite index:</strong> Built on multiple columns.</li>
+            <li><strong>Clustered index:</strong> Physically arranges data rows according to the index key.</li>
+            <li><strong>Non-clustered index:</strong> Separate structure that points to data rows.</li>
+          </ul>
+        </article>
+
+        <article class="topic-section" id="keys">
+          <h2>8. Keys</h2>
+          <p>
+            Keys are attributes or combinations of attributes used to identify records uniquely
+            and establish relationships between tables.
+          </p>
+          <ul>
+            <li><strong>Primary Key:</strong> Uniquely identifies each row and cannot contain null values.</li>
+            <li><strong>Candidate Key:</strong> Any attribute that can uniquely identify a row.</li>
+            <li><strong>Super Key:</strong> A set of one or more attributes that uniquely identifies a row.</li>
+            <li><strong>Alternate Key:</strong> Candidate keys not chosen as the primary key.</li>
+            <li><strong>Foreign Key:</strong> A column that refers to the primary key of another table.</li>
+            <li><strong>Composite Key:</strong> A key formed by combining two or more columns.</li>
+          </ul>
+          <div class="concept-box">
+            <h3>Key difference</h3>
+            <p>
+              Every primary key is a candidate key, but not every candidate key becomes the primary key.
+              A foreign key may contain duplicate values because many rows can refer to the same parent record.
+            </p>
+          </div>
+        </article>
+
+        <article class="topic-section" id="sql-nosql">
+          <h2>9. SQL vs NoSQL</h2>
+          <p>
+            SQL and NoSQL are two major database categories. SQL databases are relational and use structured tables.
+            NoSQL databases are designed for flexibility, scalability, and unstructured or semi-structured data.
+          </p>
+          <div class="comparison-grid">
+            <div class="comparison-card">
+              <h3>SQL Databases</h3>
+              <ul>
+                <li>Relational model with tables, rows, and columns.</li>
+                <li>Uses structured schema.</li>
+                <li>Supports ACID properties strongly.</li>
+                <li>Best for complex queries and transactional systems.</li>
+                <li>Examples: MySQL, PostgreSQL, Oracle, SQL Server.</li>
+              </ul>
+            </div>
+            <div class="comparison-card">
+              <h3>NoSQL Databases</h3>
+              <ul>
+                <li>Non-relational model.</li>
+                <li>Schema can be flexible.</li>
+                <li>Designed for horizontal scaling.</li>
+                <li>Good for large-scale distributed systems and rapidly changing data.</li>
+                <li>Examples: MongoDB, Cassandra, Redis, CouchDB.</li>
+              </ul>
+            </div>
+          </div>
+          <p>
+            SQL is preferred when data consistency and relationships are critical.
+            NoSQL is often preferred when flexibility, speed, and large-scale distributed storage are required.
+          </p>
+        </article>
+
+        <article class="topic-section" id="transactions">
+          <h2>10. Transactions</h2>
+          <p>
+            A transaction is a sequence of database operations treated as a single logical unit of work.
+            Either all operations succeed or none of them are permanently applied.
+          </p>
+          <h3>ACID properties</h3>
+          <ul>
+            <li><strong>Atomicity:</strong> All operations happen completely or not at all.</li>
+            <li><strong>Consistency:</strong> The database moves from one valid state to another.</li>
+            <li><strong>Isolation:</strong> Concurrent transactions do not interfere incorrectly.</li>
+            <li><strong>Durability:</strong> Once committed, data remains saved even after system failure.</li>
+          </ul>
+          <div class="code-card">
+<pre><code>BEGIN TRANSACTION;
+UPDATE Accounts SET balance = balance - 1000 WHERE account_id = 1;
+UPDATE Accounts SET balance = balance + 1000 WHERE account_id = 2;
+COMMIT;</code></pre>
+          </div>
+          <p>
+            If any step fails, the database can perform a <code>ROLLBACK</code> to restore the previous state.
+            Transactions are especially important in banking, payment, inventory, and order-processing systems.
+          </p>
+        </article>
+
+        <article class="topic-section" id="objects">
+          <h2>11. Database Objects</h2>
+          <p>
+            Database objects are logical structures used to store, manage, and manipulate data.
+            Understanding them is important for interviews and MCQ-based exams.
+          </p>
+          <ul>
+            <li><strong>Table:</strong> Stores data in rows and columns.</li>
+            <li><strong>View:</strong> A virtual table based on a query.</li>
+            <li><strong>Index:</strong> Improves data retrieval speed.</li>
+            <li><strong>Sequence:</strong> Generates numeric values, often for IDs.</li>
+            <li><strong>Synonym:</strong> Another name for a database object.</li>
+            <li><strong>Stored Procedure:</strong> Precompiled SQL block that performs operations.</li>
+            <li><strong>Function:</strong> Similar to procedure but generally returns a value.</li>
+            <li><strong>Trigger:</strong> Automatically executes on events like insert, update, or delete.</li>
+            <li><strong>Cursor:</strong> Used to process query results row by row.</li>
+          </ul>
+          <div class="concept-box">
+            <h3>Quick distinction</h3>
+            <p>
+              A <strong>view</strong> stores a query definition, not the actual table data in most cases.
+              A <strong>trigger</strong> fires automatically, while a <strong>procedure</strong> must be called explicitly.
+            </p>
+          </div>
+        </article>
+
+        <article class="topic-section">
+          <h2>12. Quick Revision Tips</h2>
+          <ul>
+            <li>Remember the difference between <code>WHERE</code> and <code>HAVING</code>.</li>
+            <li>Know which join returns matched versus unmatched rows.</li>
+            <li>Understand primary key, foreign key, and candidate key clearly.</li>
+            <li>Revise ACID properties carefully because they are frequently asked.</li>
+            <li>Be comfortable with normalization up to 3NF.</li>
+            <li>Memorize the difference between <code>RANK()</code>, <code>DENSE_RANK()</code>, and <code>ROW_NUMBER()</code>.</li>
+            <li>Review database objects like views, triggers, procedures, and indexes.</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="tab-panel mcq-panel">
+        <div class="mcq-header">
+          <h2>40 MCQs for Practice</h2>
+          <p>Each question includes the correct answer and a short explanation for fast revision.</p>
+        </div>
+
+        <div class="mcq-list">
+          <article class="mcq-item"><h3>1. Which SQL clause is used to filter rows before grouping?</h3><p><strong>Answer:</strong> WHERE</p><p><strong>Explanation:</strong> WHERE filters individual rows before GROUP BY is applied.</p></article>
+          <article class="mcq-item"><h3>2. Which clause is used to filter groups after aggregation?</h3><p><strong>Answer:</strong> HAVING</p><p><strong>Explanation:</strong> HAVING works on grouped data after aggregate functions are calculated.</p></article>
+          <article class="mcq-item"><h3>3. Which join returns only matching rows from both tables?</h3><p><strong>Answer:</strong> INNER JOIN</p><p><strong>Explanation:</strong> INNER JOIN includes only rows that satisfy the join condition in both tables.</p></article>
+          <article class="mcq-item"><h3>4. Which join returns all rows from the left table and matched rows from the right table?</h3><p><strong>Answer:</strong> LEFT JOIN</p><p><strong>Explanation:</strong> Unmatched right-side rows are shown as NULL.</p></article>
+          <article class="mcq-item"><h3>5. Which aggregate function is used to count rows?</h3><p><strong>Answer:</strong> COUNT()</p><p><strong>Explanation:</strong> COUNT() returns the total number of rows or non-null values.</p></article>
+          <article class="mcq-item"><h3>6. Which function is used to find the average of numeric values?</h3><p><strong>Answer:</strong> AVG()</p><p><strong>Explanation:</strong> AVG() returns the arithmetic mean of selected values.</p></article>
+          <article class="mcq-item"><h3>7. Which operator is used to search for a pattern in SQL?</h3><p><strong>Answer:</strong> LIKE</p><p><strong>Explanation:</strong> LIKE works with wildcards such as % and _.</p></article>
+          <article class="mcq-item"><h3>8. Which keyword is used to remove duplicate rows when combining query results?</h3><p><strong>Answer:</strong> UNION</p><p><strong>Explanation:</strong> UNION removes duplicates, unlike UNION ALL.</p></article>
+          <article class="mcq-item"><h3>9. Which set operator keeps duplicates?</h3><p><strong>Answer:</strong> UNION ALL</p><p><strong>Explanation:</strong> UNION ALL simply concatenates results.</p></article>
+          <article class="mcq-item"><h3>10. Which ranking function skips rank numbers when ties occur?</h3><p><strong>Answer:</strong> RANK()</p><p><strong>Explanation:</strong> If two rows tie at rank 1, the next rank becomes 3.</p></article>
+          <article class="mcq-item"><h3>11. Which ranking function does not skip numbers after ties?</h3><p><strong>Answer:</strong> DENSE_RANK()</p><p><strong>Explanation:</strong> It assigns consecutive rank values even when ties exist.</p></article>
+          <article class="mcq-item"><h3>12. Which function gives a unique sequential number to each row?</h3><p><strong>Answer:</strong> ROW_NUMBER()</p><p><strong>Explanation:</strong> Every row gets a distinct position number.</p></article>
+          <article class="mcq-item"><h3>13. Which normal form removes repeating groups and ensures atomic values?</h3><p><strong>Answer:</strong> First Normal Form (1NF)</p><p><strong>Explanation:</strong> 1NF requires each field to contain only one value.</p></article>
+          <article class="mcq-item"><h3>14. Which normal form removes transitive dependency?</h3><p><strong>Answer:</strong> Third Normal Form (3NF)</p><p><strong>Explanation:</strong> In 3NF, non-key attributes depend only on the key.</p></article>
+          <article class="mcq-item"><h3>15. Which key uniquely identifies each row in a table?</h3><p><strong>Answer:</strong> Primary Key</p><p><strong>Explanation:</strong> A primary key must be unique and cannot be NULL.</p></article>
+          <article class="mcq-item"><h3>16. Which key refers to a primary key in another table?</h3><p><strong>Answer:</strong> Foreign Key</p><p><strong>Explanation:</strong> A foreign key establishes referential integrity between tables.</p></article>
+          <article class="mcq-item"><h3>17. Which key is a combination of multiple columns?</h3><p><strong>Answer:</strong> Composite Key</p><p><strong>Explanation:</strong> Two or more attributes together uniquely identify a row.</p></article>
+          <article class="mcq-item"><h3>18. Which database property ensures all or nothing execution?</h3><p><strong>Answer:</strong> Atomicity</p><p><strong>Explanation:</strong> Atomicity guarantees a transaction fully completes or fully fails.</p></article>
+          <article class="mcq-item"><h3>19. Which ACID property ensures committed data is permanently saved?</h3><p><strong>Answer:</strong> Durability</p><p><strong>Explanation:</strong> Data remains preserved even after power failure or crash.</p></article>
+          <article class="mcq-item"><h3>20. Which ACID property ensures one valid database state changes to another valid state?</h3><p><strong>Answer:</strong> Consistency</p><p><strong>Explanation:</strong> Rules and constraints remain satisfied after a transaction.</p></article>
+          <article class="mcq-item"><h3>21. Which command is used to undo changes in a transaction?</h3><p><strong>Answer:</strong> ROLLBACK</p><p><strong>Explanation:</strong> ROLLBACK reverts uncommitted changes.</p></article>
+          <article class="mcq-item"><h3>22. Which command permanently saves a transaction?</h3><p><strong>Answer:</strong> COMMIT</p><p><strong>Explanation:</strong> COMMIT makes the changes permanent.</p></article>
+          <article class="mcq-item"><h3>23. Which database object is a virtual table based on a query?</h3><p><strong>Answer:</strong> View</p><p><strong>Explanation:</strong> A view stores a query definition and presents data like a table.</p></article>
+          <article class="mcq-item"><h3>24. Which database object automatically executes when data changes occur?</h3><p><strong>Answer:</strong> Trigger</p><p><strong>Explanation:</strong> Triggers fire on events like INSERT, UPDATE, or DELETE.</p></article>
+          <article class="mcq-item"><h3>25. Which object improves query retrieval speed?</h3><p><strong>Answer:</strong> Index</p><p><strong>Explanation:</strong> Indexes help locate rows faster than a full table scan.</p></article>
+          <article class="mcq-item"><h3>26. Which SQL database type uses tables with predefined schema?</h3><p><strong>Answer:</strong> Relational or SQL database</p><p><strong>Explanation:</strong> SQL databases use structured schema and table relationships.</p></article>
+          <article class="mcq-item"><h3>27. Which database type is better known for flexible schema design?</h3><p><strong>Answer:</strong> NoSQL</p><p><strong>Explanation:</strong> NoSQL systems often allow semi-structured or unstructured data.</p></article>
+          <article class="mcq-item"><h3>28. Which clause groups rows sharing the same values?</h3><p><strong>Answer:</strong> GROUP BY</p><p><strong>Explanation:</strong> GROUP BY creates row groups for aggregate calculations.</p></article>
+          <article class="mcq-item"><h3>29. Which function finds the highest value in a column?</h3><p><strong>Answer:</strong> MAX()</p><p><strong>Explanation:</strong> MAX() returns the greatest value.</p></article>
+          <article class="mcq-item"><h3>30. Which function finds the lowest value in a column?</h3><p><strong>Answer:</strong> MIN()</p><p><strong>Explanation:</strong> MIN() returns the smallest value.</p></article>
+          <article class="mcq-item"><h3>31. Which operator is used to check whether a value lies within a range?</h3><p><strong>Answer:</strong> BETWEEN</p><p><strong>Explanation:</strong> BETWEEN checks inclusive lower and upper boundaries.</p></article>
+          <article class="mcq-item"><h3>32. Which condition should be used to check missing values?</h3><p><strong>Answer:</strong> IS NULL</p><p><strong>Explanation:</strong> NULL comparisons do not work correctly with = operator.</p></article>
+          <article class="mcq-item"><h3>33. Which join produces a Cartesian product?</h3><p><strong>Answer:</strong> CROSS JOIN</p><p><strong>Explanation:</strong> Every row of the first table combines with every row of the second table.</p></article>
+          <article class="mcq-item"><h3>34. Which join can be used to compare rows within the same table?</h3><p><strong>Answer:</strong> SELF JOIN</p><p><strong>Explanation:</strong> A table is joined with itself using aliases.</p></article>
+          <article class="mcq-item"><h3>35. Which anomaly occurs when deleting a row removes other useful information?</h3><p><strong>Answer:</strong> Delete anomaly</p><p><strong>Explanation:</strong> Poorly designed tables may lose extra data after deletion.</p></article>
+          <article class="mcq-item"><h3>36. Which anomaly occurs when the same fact must be updated in many rows?</h3><p><strong>Answer:</strong> Update anomaly</p><p><strong>Explanation:</strong> Redundancy causes inconsistent updates.</p></article>
+          <article class="mcq-item"><h3>37. Which anomaly occurs when a record cannot be inserted without another unrelated value?</h3><p><strong>Answer:</strong> Insert anomaly</p><p><strong>Explanation:</strong> This commonly appears in unnormalized designs.</p></article>
+          <article class="mcq-item"><h3>38. Which SQL object is a precompiled block of code used to perform operations?</h3><p><strong>Answer:</strong> Stored Procedure</p><p><strong>Explanation:</strong> Procedures contain SQL logic that can be executed when needed.</p></article>
+          <article class="mcq-item"><h3>39. Which type of index defines the physical order of data rows?</h3><p><strong>Answer:</strong> Clustered Index</p><p><strong>Explanation:</strong> In a clustered index, data is stored in the same order as the index key.</p></article>
+          <article class="mcq-item"><h3>40. Which set operator returns only rows common to both queries?</h3><p><strong>Answer:</strong> INTERSECT</p><p><strong>Explanation:</strong> INTERSECT gives common records between two result sets.</p></article>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
