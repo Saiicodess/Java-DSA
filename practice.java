@@ -78,5 +78,6 @@ public class practice{
             ms = Math.max(cs, ms);
         }
         System.out.println(ms);
+        System.out.println(cs);
     }
 }
